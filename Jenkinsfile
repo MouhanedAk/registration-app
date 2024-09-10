@@ -56,20 +56,32 @@ pipeline {
             }
 
         }
+       stage("Build & Push Docker Image") {
+           steps {
+               script {
+            // Build the Docker image
+            sh """
+            docker build -t ${IMAGE_NAME} .
+            """
 
-        stage("Build & Push Docker Image") {
-            steps {
-                script {
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image = docker.build "${IMAGE_NAME}"
-                    }
+            // Log in to Docker Hub
+            sh """
+            echo ${DOCKER_PASS} | docker login -u ${DOCKER_USER} --password-stdin
+            """
 
-                    docker.withRegistry('',DOCKER_PASS) {
-                        docker_image.push("${IMAGE_TAG}")
-                        docker_image.push('latest')
-                    }
-                }
-            }
+            // Push the Docker image with the specific tag
+            sh """
+            docker tag ${IMAGE_NAME} ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}
+            docker push ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}
+            """
+
+            // Optionally, push the 'latest' tag
+            sh """
+            docker tag ${IMAGE_NAME} ${DOCKER_USER}/${IMAGE_NAME}:latest
+            docker push ${DOCKER_USER}/${IMAGE_NAME}:latest
+            """
+               }
+           }
        }
     }
 }
