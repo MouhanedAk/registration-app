@@ -58,11 +58,13 @@ pipeline {
         }
        stage("Build & Push Docker Image") {
            steps {
-	       docker.withRegistry('',DOCKER_PASS) {
+	       script {
+		    docker.withRegistry('',DOCKER_PASS) {
                         sh "docker build -t ${IMAGE_NAME} ."
 		        sh "docker tag ${IMAGE_NAME} ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
 		       	sh "docker push ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
                 }
+	       }
            }
        }
     }
