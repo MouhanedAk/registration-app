@@ -61,7 +61,7 @@ pipeline {
 	       script {
 		    docker.withRegistry('https://index.docker.io/v1/',DOCKER_PASS) {
                         sh "docker build -t ${IMAGE_NAME} ."
-			sh "docker tag register-app-pipeline ${IMAGE_NAME}:${IMAGE_TAG}"
+			sh "docker tag register-app-pipeline ${IMAGE_NAME}"
 			sh "docker push mouhanedakermi/register-app-pipeline:${IMAGE_TAG}"
                 }
 	       }
