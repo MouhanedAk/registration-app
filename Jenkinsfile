@@ -61,9 +61,8 @@ pipeline {
 	       script {
 		    docker.withRegistry('https://index.docker.io/v1/',DOCKER_PASS) {
                         sh "docker build -t ${IMAGE_NAME} ."
-			sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest"
-			sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-                        sh "docker push ${IMAGE_NAME}:latest"
+			sh "docker tag ${IMAGE_NAME} ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
+			sh "docker push ${DOCKER_USER}/${IMAGE_NAME}:${IMAGE_TAG}"
                 }
 	       }
            }
