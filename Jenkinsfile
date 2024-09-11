@@ -5,7 +5,7 @@ pipeline {
         maven 'Maven3'
     }
     environment {
-	    APP_NAME = "register-app-pipeline"
+	    APP_NAME = "first-docker-image"
             RELEASE = "1.0.0"
             DOCKER_USER = "mouhanedakermi"
             DOCKER_PASS = 'dockerhub'
@@ -57,16 +57,19 @@ pipeline {
 
         }
        stage("Build & Push Docker Image") {
-           steps {
-	       script {
-		    docker.withRegistry('',DOCKER_PASS) {
-                        sh "docker build -t ${IMAGE_NAME}:${IMAGE_TAG} ."
-			sh "docker tag ${IMAGE_NAME}:${IMAGE_TAG} ${IMAGE_NAME}:latest"
-			sh "docker push ${IMAGE_NAME}:${IMAGE_TAG}"
-			sh "docker push ${IMAGE_NAME}:latest"
+            steps {
+                script {
+                    docker.withRegistry('',DOCKER_PASS) {
+                        docker_image = docker.build "${IMAGE_NAME}"
+                    }
+
+                    docker.withRegistry('',DOCKER_PASS) {
+                        docker_image.push("${IMAGE_TAG}")
+                        docker_image.push('latest')
+                    }
                 }
-	       }
-           }
+            }
+
        }
     }
 }
